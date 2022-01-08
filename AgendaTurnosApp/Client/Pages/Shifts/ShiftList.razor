@@ -1,0 +1,66 @@
+﻿@page "/shift/list"
+
+@inject IShiftService ShiftService
+
+<h3>Listado de Turnos</h3>
+
+<table>
+    <tbody>
+        <tr>
+            <td colspan="2"><a href="shift/create">Añadir turno</a></td>
+        </tr>
+    </tbody>
+</table>
+
+@Message
+
+@if (shifts != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Paciente</th>
+                <th>Doctor</th>                
+                <th>Fecha</th>                
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var shift in shifts)
+            {
+            <tr>
+                <td>@shift.PatientId</td>
+                <td>@shift.DoctorId</td>
+                <td>@shift.ShiftDate</td>
+                <td><a href="@($"doctor/edit/{shift.Id}")">Editar</a></td>
+                <td><a href="@($"doctor/delete/{shift.Id}")">Eliminar</a></td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Cargando ....</p>
+}
+
+@code {    
+    public IEnumerable<Shift> shifts;
+    public string Message { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            shifts = await ShiftService.GetAll();
+
+        }
+        catch (Exception e)
+        {
+
+            Message = "Error... " + e.Message;
+        }
+    }
+
+}

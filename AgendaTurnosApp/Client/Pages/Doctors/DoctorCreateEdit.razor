@@ -1,0 +1,86 @@
+﻿@page "/doctor/create"
+@page "/doctor/edit/{id:int}"
+
+@inject IDoctorService DoctorService
+@inject NavigationManager NavigationManager
+
+<h3>Doctor</h3>
+
+@Message
+
+@if (doctor == null)
+{
+    <p>Cargando ....</p>
+}
+else
+{
+
+    <EditForm Model="doctor" OnValidSubmit="Save">
+        <div class="card">
+            <h5 class="card-header"> Datos del doctor </h5>
+            <div class="card-body">
+                <div class="container">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label for="">Nombre</label>
+                            <InputText class="form-control" @bind-Value="@doctor.FirstName"></InputText>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="">Apellidos</label>
+                            <InputText class="form-control" @bind-Value="@doctor.LastName"></InputText>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="">Teléfono</label>
+                            <InputText class="form-control" @bind-Value="@doctor.Phone"></InputText>
+                        </div>                        
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <input type="submit" class="btn btn-success" value="Guargar" />
+                            <input type="button" class="btn btn-secondary" value="Cancelar" @onclick="NavigateHome" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+
+}
+
+@code {
+    public Doctor doctor;
+    public string Message;
+
+    [Parameter]
+    public int id { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (id == 0)
+            doctor = new Doctor();
+        else
+            doctor = await DoctorService.GetDetails(id);
+    }
+
+    protected async Task Save()
+    {
+        await DoctorService.SaveDoctor(doctor);
+        NavigateHome();
+    }
+
+    private void NavigateHome()
+    {
+        NavigationManager.NavigateTo("/doctor/list");
+    }
+
+}

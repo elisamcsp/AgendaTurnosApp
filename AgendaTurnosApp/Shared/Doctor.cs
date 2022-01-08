@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AgendaTurnosApp.Shared.Entities
+namespace AgendaTurnosApp.Shared
 {
     public class Doctor
     {
@@ -15,8 +15,6 @@ namespace AgendaTurnosApp.Shared.Entities
             {
                 return FirstName + " " + LastName;
             }
-        }
-
-        public List<Shift> Shift { get; set; } = new List<Shift>();
+        }        
     }
 }

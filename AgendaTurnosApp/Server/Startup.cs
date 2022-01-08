@@ -1,4 +1,5 @@
 using AgendaTurnosApp.Repositories;
+using AgendaTurnosApp.Repositories.Shifts;
 using AgendaTurnosApp.Server.Data;
 using AgendaTurnosApp.Server.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -48,6 +49,8 @@ namespace AgendaTurnosApp.Server
             services.AddSingleton<IDbConnection>((sp) => new SqlConnection(DBConnectionString));
 
             services.AddScoped<IPatientRepository, PatientRepository>();
+            services.AddScoped<IDoctorRepository, DoctorRepository>();
+            services.AddScoped<IShiftRepository, ShiftRepository>();
 
             services.AddControllersWithViews();
             services.AddRazorPages();

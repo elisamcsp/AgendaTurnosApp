@@ -1,0 +1,86 @@
+﻿@page "/shift/create"
+@page "/shift/edit/{id:int}"
+
+@inject IShiftService ShiftService
+@inject NavigationManager NavigationManager
+
+<h3>Doctor</h3>
+
+@Message
+
+@if (shift == null)
+{
+    <p>Cargando ....</p>
+}
+else
+{
+
+    @*<EditForm Model="shift" OnValidSubmit="Save">
+        <div class="card">
+            <h5 class="card-header"> Datos del doctor </h5>
+            <div class="card-body">
+                <div class="container">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label for="">Nombre</label>
+                            <InputText class="form-control" @bind-Value="@shift.PatientId.ToString()"></InputText>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="">Apellidos</label>
+                            <InputText class="form-control" @bind-Value="@shift.ToString()"></InputText>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="">Teléfono</label>
+                            <InputDate class="form-control" @bind-Value="@shift.ShiftDate"></InputDate>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <input type="submit" class="btn btn-success" value="Guargar" />
+                            <input type="button" class="btn btn-secondary" value="Cancelar" @onclick="NavigateHome" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </EditForm>*@
+
+}
+
+@code {
+    public Shift shift;
+    public string Message;
+
+    [Parameter]
+    public int id { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (id == 0)
+            shift = new Shift();
+        else
+            shift = await ShiftService.GetDetails(id);
+    }
+
+    protected async Task Save()
+    {
+        await ShiftService.SaveShift(shift);
+        NavigateHome();
+    }
+
+    private void NavigateHome()
+    {
+        NavigationManager.NavigateTo("/shift/list");
+    }
+
+}

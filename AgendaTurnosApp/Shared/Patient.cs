@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AgendaTurnosApp.Shared.Entities
+namespace AgendaTurnosApp.Shared
 {
     public class Patient
     {
@@ -23,8 +23,6 @@ namespace AgendaTurnosApp.Shared.Entities
                 return FirstName + " " + LastName;
             }
         }
-
-        public List<Shift> Shift { get; set; } = new List<Shift>();
 
     }
 }

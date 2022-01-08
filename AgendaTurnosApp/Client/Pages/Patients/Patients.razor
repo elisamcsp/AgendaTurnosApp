@@ -1,0 +1,71 @@
+﻿@page "/patient/list"
+
+@inject IPatientService PatientService
+
+<h3>Listado de Pacientes</h3>
+
+<table>
+    <tbody>
+        <tr>
+            <td colspan="2"><a href="/patient/create">Añadir paciente</a></td>
+        </tr>
+    </tbody>
+</table>
+
+@Message
+
+@if (patients != null)
+{
+  <table class="table">
+      <thead>
+          <tr>
+              <th>Nombre</th>
+              <th>DNI</th>
+              <th>Fecha Nacimiento</th>
+              <th>Telefono</th>
+              <th>Dirección</th>
+              <th></th>
+              <th></th>
+          </tr>
+      </thead>
+      <tbody>
+          @foreach (var patient in patients)
+          {
+              <tr>
+                  <td>@patient.FullName</td>
+                  <td>@patient.DNI</td>
+                  <td>@patient.BirthDate</td>
+                  <td>@patient.Phone</td>
+                  <td>@patient.Address</td>
+                  <td><a href="@($"patient/edit/{patient.Id}")">Editar</a></td>
+                  <td><a href="@($"patient/delete/{patient.Id}")">Eliminar</a></td>
+              </tr>
+          }
+      </tbody>
+  </table>
+}
+else
+{
+    <p>Cargando ....</p>
+}
+
+@code {
+    //private Patient patient;
+    public IEnumerable<Patient> patients;
+    public string Message { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            patients = await PatientService.GetAll();
+
+        }
+        catch (Exception e)
+        {
+
+            Message = "Error... " + e.Message;
+        }
+    }
+
+}

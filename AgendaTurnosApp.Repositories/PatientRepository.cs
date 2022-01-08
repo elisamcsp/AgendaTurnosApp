@@ -1,4 +1,4 @@
-﻿using AgendaTurnosApp.Shared.Entities;
+﻿using AgendaTurnosApp.Shared;
 using Dapper;
 using System.Collections.Generic;
 using System.Data;
@@ -13,14 +13,7 @@ namespace AgendaTurnosApp.Repositories
         public PatientRepository(IDbConnection dbConnection)
         {
             _dbConnection = dbConnection;
-        }
-
-        public async Task<IEnumerable<Patient>> GetAll()
-        {
-            string sql = "SELECT * FROM Patients";           
-
-            return (IEnumerable<Patient>)await _dbConnection.QueryAsync<IEnumerable<Patient>>(sql, new { });
-        }
+        }        
 
         public async Task<Patient> GetDetails(int id)
         {
@@ -30,28 +23,43 @@ namespace AgendaTurnosApp.Repositories
             return result;
         
         }
-
-        public async Task<int> InsertPatient(Patient patient)
+        public async Task<IEnumerable<Patient>> GetAll()
         {
-            string sql = @"INSERT INTO Patients(DNI, FirstName, LastName, BirthDate, Phone, Address)
-                            VALUES (@DNI, @FirstName, @LastName, @BirthDate, @Phone, @Address)";
+            string sql = "SELECT * FROM Patients";            
 
-            int result = await _dbConnection.ExecuteAsync(sql, new
-                            {
-                                DNI = patient.DNI,
-                                FirstName = patient.FirstName,
-                                LastName = patient.LastName,
-                                BirthDate = patient.BirthDate,
-                                Phone = patient.Phone,
-                                Address = patient.Address
-                            });
-
-            return result;
+            return await _dbConnection.QueryAsync<Patient>(sql);
         }
 
-        public async Task<int> UpdatePatient(Patient patient)
+        public async Task<bool> InsertPatient(Patient patient)
         {
-            string sql = @"UPDATE Patients
+            try
+            {
+                string sql = @"INSERT INTO Patients(DNI, FirstName, LastName, BirthDate, Phone, Address) VALUES (@DNI, @FirstName, @LastName, @BirthDate, @Phone, @Address)";
+
+                int result = await _dbConnection.ExecuteAsync(sql, new
+                {
+                    DNI = patient.DNI,
+                    FirstName = patient.FirstName,
+                    LastName = patient.LastName,
+                    BirthDate = patient.BirthDate,
+                    Phone = patient.Phone,
+                    Address = patient.Address
+                });
+
+                return result > 0;
+            }
+            catch (System.Exception e)
+            {
+                throw e;
+            }
+            
+        }
+
+        public async Task<bool> UpdatePatient(Patient patient)
+        {
+            try
+            {
+                string sql = @"UPDATE Patients
                             SET DNI = @DNI, 
                                 FirstName = @FirstName,     
                                 LastName = @LastName,
@@ -60,27 +68,44 @@ namespace AgendaTurnosApp.Repositories
                                 Address = @Address
                             WHERE Id = @Id";
 
-            int result = await _dbConnection.ExecuteAsync(sql, new
-            {
-                DNI = patient.DNI,
-                FirstName = patient.FirstName,
-                LastName = patient.LastName,
-                BirthDate = patient.BirthDate,
-                Phone = patient.Phone,
-                Address = patient.Address,
-                Id = patient.Id 
-            });
+                int result = await _dbConnection.ExecuteAsync(sql, new
+                {
+                    DNI = patient.DNI,
+                    FirstName = patient.FirstName,
+                    LastName = patient.LastName,
+                    BirthDate = patient.BirthDate,
+                    Phone = patient.Phone,
+                    Address = patient.Address,
+                    Id = patient.Id
+                });
 
-            return result;
+                return result > 0;
+            }
+            catch (System.Exception e)
+            {
+                throw e;
+            }
+            
         }
 
         public async Task<int> DeltePatient(int id)
         {
-            string sql = @"DELETE Patients WHERE Id = @Id";
+            try
+            {
+                string sql = @"DELETE Patients WHERE Id = @Id";
 
-            int result = await _dbConnection.ExecuteAsync(sql, new {Id = id });
+                int result = await _dbConnection.ExecuteAsync(sql, new { Id = id });
 
-            return result;
+                return result;
+            }
+            catch (System.Exception e)
+            {
+
+                throw e;
+            }
+            
         }
+
+        
     }
 }

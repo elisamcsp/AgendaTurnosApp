@@ -1,13 +1,9 @@
 using AgendaTurnosApp.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AgendaTurnosApp.Client
@@ -24,9 +20,12 @@ namespace AgendaTurnosApp.Client
 
             // Supply HttpClient instances that include access tokens when making requests to the server project
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("AgendaTurnosApp.ServerAPI"));
-
-            builder.Services.AddApiAuthorization();
+            
             builder.Services.AddScoped<IPatientService, PatientService>();
+            builder.Services.AddScoped<IDoctorService, DoctorService>();
+            builder.Services.AddScoped<IShiftService, ShiftService>();
+
+            builder.Services.AddApiAuthorization();           
 
             await builder.Build().RunAsync();
         }
