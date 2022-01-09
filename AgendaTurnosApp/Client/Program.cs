@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MudBlazor.Services;
 
 namespace AgendaTurnosApp.Client
 {
@@ -26,6 +27,7 @@ namespace AgendaTurnosApp.Client
             builder.Services.AddScoped<IShiftService, ShiftService>();
 
             builder.Services.AddApiAuthorization();           
+            builder.Services.AddMudServices();
 
             await builder.Build().RunAsync();
         }

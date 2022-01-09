@@ -1,0 +1,73 @@
+﻿@inject IPatientService PatientService
+
+<MudDialog>
+    <TitleContent> Datos del Paciente</TitleContent>
+    <DialogContent>
+        <EditForm Model="@patient" OnValidSubmit="AddPatient">
+            <div class="card">
+                <h5 class="card-header"> Datos del paciente </h5>
+                <div class="card-body">
+                    <div class="container">
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">                                
+                                <MudTextFieldString @bind-Value="@patient.FirstName" Label="Nombre" Variant="Variant.Outlined" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <MudTextFieldString @bind-Value="@patient.LastName" Label="Apellidos" Variant="Variant.Outlined" />
+                                @*<label for="">Apellidos</label>
+                                 <InputText class="form-control" @bind-Value="@patient.LastName"></InputText>*@
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="">DNI/NIE/TIE</label>
+                                <InputText class="form-control" @bind-Value="@patient.DNI"></InputText>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="">Fecha Nacimiento</label>
+                                <InputDate class="form-control" @bind-Value="@patient.BirthDate"></InputDate>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">                                
+                                <label for=""> Teléfono</label>
+                                <InputText class="form-control" @bind-Value="@patient.Phone"></InputText>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="">Dirección</label>
+                                <InputTextArea class="form-control" @bind-Value="@patient.Address"></InputTextArea>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="AddPatient">Añadir</MudButton>
+        <MudButton OnClick="Cancel">Cancelar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public Patient patient = new Patient();
+    public string Message { get; set; }
+
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private void AddPatient()
+    {
+        MudDialog.Close(DialogResult.Ok(patient));
+    }
+
+}

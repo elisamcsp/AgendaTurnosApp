@@ -3,6 +3,7 @@
 
 @attribute [Authorize]
 @inject IPatientService PatientService
+@inject IDialogService DialogService
 @inject NavigationManager NavigationManager
 
 <h3>Paciente</h3>
@@ -59,7 +60,7 @@ else
                         <div class="col-md-4 mb-3">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <input type="submit" class="btn btn-success" value="Guargar" />
+                            <input type="button" class="btn btn-success" value="Añadir paciente" @onclick="AddPatient" />
                             <input type="button" class="btn btn-secondary" value="Cancelar" @onclick="NavigateHome" />
                         </div>
                         <div class="col-md-4 mb-3">
@@ -98,4 +99,18 @@ else
         NavigationManager.NavigateTo("/patient/list");
     }
 
+    protected async Task AddPatient()
+    {
+        DialogOptions maxWidthOptions = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        var dialog = DialogService.Show<PatientDetails>("Datos del Paciente", maxWidthOptions);
+
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            if(result.Data != null)
+                patient = (Patient) result.Data;
+        }
+    }
 }

@@ -2,22 +2,41 @@
 
 @attribute [Authorize]
 @inject IPatientService PatientService
+@inject IDialogService DialogService
 
 <h3>Listado de Pacientes</h3>
 
-<table>
-    <tbody>
-        <tr>
-            <td colspan="2"><a href="/patient/create">Añadir paciente</a></td>
-        </tr>
-    </tbody>
-</table>
+<MudButton OnClick="AddPatient"> Añadir paciente</MudButton>
 
 @Message
 
-@if (patients != null)
+@if (patients != null && patients.Any())
 {
-    <table class="table">
+    <MudTable Items="patients" Hover="true" Breakpoint="Breakpoint.Sm">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Listado de Pacientes</MudText>
+        </ToolBarContent>
+        <HeaderContent>            
+            <MudTh>Nombre</MudTh>
+            <MudTh>DNI</MudTh>
+            <MudTh>Fecha Nacimiento</MudTh>
+            <MudTh>Telefono</MudTh>
+            <MudTh>Dirección</MudTh>
+            <MudTh ></MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate Context="PatientContext">
+            <MudTd DataLabel="Name">@PatientContext.FullName</MudTd>
+            <MudTd DataLabel="DNI">@PatientContext.DNI</MudTd>
+            <MudTd DataLabel="BirthDate">@PatientContext.BirthDate</MudTd>
+            <MudTd DataLabel="Phone">@PatientContext.Phone</MudTd>
+            <MudTd DataLabel="Address">@PatientContext.Address</MudTd>
+            <MudTd></MudTd>
+            <MudTd></MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    @*<table class="table">
         <thead>
             <tr>
                 <th>Nombre</th>
@@ -43,7 +62,7 @@
                 </tr>
             }
         </tbody>
-    </table>
+    </table>*@
 }
 else
 {
@@ -52,6 +71,7 @@ else
 
 @code {
     //private Patient patient;
+    public Patient patient = new Patient();
     public IEnumerable<Patient> patients;
     public string Message { get; set; }
 
@@ -68,5 +88,20 @@ else
             Message = "Error... " + e.Message;
         }
     }
+
+    private async Task AddPatient()
+    {
+        var dialog = DialogService.Show<PatientDetails>("Datos del Paciente");
+
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            if (result.Data != null)
+                patient = (Patient) result.Data;
+        }
+    }
+
+
 
 }
