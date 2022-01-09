@@ -1,5 +1,6 @@
 ﻿@page "/shift/list"
 
+@attribute [Authorize]
 @inject IShiftService ShiftService
 
 <h3>Listado de Turnos</h3>
@@ -20,8 +21,8 @@
         <thead>
             <tr>
                 <th>Paciente</th>
-                <th>Doctor</th>                
-                <th>Fecha</th>                
+                <th>Doctor</th>
+                <th>Fecha</th>
                 <th></th>
                 <th></th>
             </tr>
@@ -29,13 +30,13 @@
         <tbody>
             @foreach (var shift in shifts)
             {
-            <tr>
-                <td>@shift.PatientId</td>
-                <td>@shift.DoctorId</td>
-                <td>@shift.ShiftDate</td>
-                <td><a href="@($"doctor/edit/{shift.Id}")">Editar</a></td>
-                <td><a href="@($"doctor/delete/{shift.Id}")">Eliminar</a></td>
-            </tr>
+                <tr>
+                    <td>@shift.PatientId</td>
+                    <td>@shift.DoctorId</td>
+                    <td>@shift.ShiftDate</td>
+                    <td><a href="@($"shift/edit/{shift.Id}")">Editar</a></td>
+                    <td><a href="@($"shift/delete/{shift.Id}")">Eliminar</a></td>
+                </tr>
             }
         </tbody>
     </table>
@@ -45,7 +46,7 @@ else
     <p>Cargando ....</p>
 }
 
-@code {    
+@code {
     public IEnumerable<Shift> shifts;
     public string Message { get; set; }
 

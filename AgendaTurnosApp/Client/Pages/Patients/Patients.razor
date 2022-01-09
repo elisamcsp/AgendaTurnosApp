@@ -1,5 +1,6 @@
 ﻿@page "/patient/list"
 
+@attribute [Authorize]
 @inject IPatientService PatientService
 
 <h3>Listado de Pacientes</h3>
@@ -16,33 +17,33 @@
 
 @if (patients != null)
 {
-  <table class="table">
-      <thead>
-          <tr>
-              <th>Nombre</th>
-              <th>DNI</th>
-              <th>Fecha Nacimiento</th>
-              <th>Telefono</th>
-              <th>Dirección</th>
-              <th></th>
-              <th></th>
-          </tr>
-      </thead>
-      <tbody>
-          @foreach (var patient in patients)
-          {
-              <tr>
-                  <td>@patient.FullName</td>
-                  <td>@patient.DNI</td>
-                  <td>@patient.BirthDate</td>
-                  <td>@patient.Phone</td>
-                  <td>@patient.Address</td>
-                  <td><a href="@($"patient/edit/{patient.Id}")">Editar</a></td>
-                  <td><a href="@($"patient/delete/{patient.Id}")">Eliminar</a></td>
-              </tr>
-          }
-      </tbody>
-  </table>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>DNI</th>
+                <th>Fecha Nacimiento</th>
+                <th>Telefono</th>
+                <th>Dirección</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var patient in patients)
+            {
+                <tr>
+                    <td>@patient.FullName</td>
+                    <td>@patient.DNI</td>
+                    <td>@patient.BirthDate</td>
+                    <td>@patient.Phone</td>
+                    <td>@patient.Address</td>
+                    <td><a href="@($"patient/edit/{patient.Id}")">Editar</a></td>
+                    <td><a href="@($"patient/delete/{patient.Id}")">Eliminar</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 else
 {

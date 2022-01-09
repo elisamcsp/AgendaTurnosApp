@@ -1,5 +1,6 @@
 ﻿using AgendaTurnosApp.Repositories.Shifts;
 using AgendaTurnosApp.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace AgendaTurnosApp.Server.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ShiftController : ControllerBase
@@ -43,7 +45,7 @@ namespace AgendaTurnosApp.Server.Controllers
                 ModelState.AddModelError("DoctorId", "Debe seleccionar el Doctor");
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(ModelState);
 
             await _shiftRepository.InsertShift(Shift);
             return NoContent();
@@ -60,7 +62,7 @@ namespace AgendaTurnosApp.Server.Controllers
                 ModelState.AddModelError("DoctorId", "Debe seleccionar el Doctor");
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(ModelState);
 
             try
             {

@@ -1,10 +1,13 @@
 ﻿@page "/shift/create"
 @page "/shift/edit/{id:int}"
 
+@attribute [Authorize]
 @inject IShiftService ShiftService
+@inject IPatientService PacienteService
+@inject IDoctorService DoctorService
 @inject NavigationManager NavigationManager
 
-<h3>Doctor</h3>
+<h3>Turno</h3>
 
 @Message
 
@@ -14,33 +17,46 @@
 }
 else
 {
-
-    @*<EditForm Model="shift" OnValidSubmit="Save">
+    <EditForm Model="shift" OnValidSubmit="Save">
         <div class="card">
-            <h5 class="card-header"> Datos del doctor </h5>
+            <h5 class="card-header"> Datos del Turno </h5>
             <div class="card-body">
                 <div class="container">
 
                     <div class="row">
 
                         <div class="col-md-6 mb-3">
-                            <label for="">Nombre</label>
-                            <InputText class="form-control" @bind-Value="@shift.PatientId.ToString()"></InputText>
+                            <label for="">Turno</label>
+                            <InputSelect class="form-control" @bind-Value="shift.PatientId">
+                                @foreach (var patient in patients)
+                                    {
+                                    <option value="@patient.Id">@patient.FullName</option>
+                                    }
+                            </InputSelect>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="">Apellidos</label>
-                            <InputText class="form-control" @bind-Value="@shift.ToString()"></InputText>
+                            <label for="">Doctor</label>
+                            <InputSelect class="form-control " @bind-Value="shift.DoctorId">
+                                @foreach (var doctor in doctors)
+                                    {
+                                    <option value="@doctor.Id">@doctor.FullName</option>
+                                    }
+                            </InputSelect>
                         </div>
+
                     </div>
                     <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label for="">Teléfono</label>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="">Fecha Turno</label>
                             <InputDate class="form-control" @bind-Value="@shift.ShiftDate"></InputDate>
                         </div>
+
                     </div>
 
                     <div class="row">
+
                         <div class="col-md-4 mb-3">
                         </div>
                         <div class="col-md-4 mb-3">
@@ -49,16 +65,19 @@ else
                         </div>
                         <div class="col-md-4 mb-3">
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
-    </EditForm>*@
+    </EditForm>
 
 }
 
 @code {
     public Shift shift;
+    public IEnumerable<Patient> patients;
+    public IEnumerable<Doctor> doctors;
     public string Message;
 
     [Parameter]
@@ -66,10 +85,25 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        if (id == 0)
-            shift = new Shift();
-        else
-            shift = await ShiftService.GetDetails(id);
+        try
+        {
+            patients = await PacienteService.GetAll();
+            doctors = await DoctorService.GetAll();
+
+            if (id == 0)
+                shift = new Shift()
+                {
+                    PatientId = 1,
+                    DoctorId = 1,
+                    ShiftDate = DateTime.Now
+                };
+            else
+                shift = await ShiftService.GetDetails(id);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     protected async Task Save()
@@ -82,5 +116,4 @@ else
     {
         NavigationManager.NavigateTo("/shift/list");
     }
-
 }

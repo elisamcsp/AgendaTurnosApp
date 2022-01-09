@@ -1,5 +1,6 @@
 ﻿@page "/doctor/delete/{id:int}"
 
+@attribute [Authorize]
 @inject IDoctorService DoctorService
 @inject NavigationManager NavigationManager
 
@@ -36,7 +37,7 @@ else
                         <div class="col-md-12 mb-3">
                             <label for="">DNI/NIE/TIE</label>
                             <InputText class="form-control" readonly @bind-Value="@doctor.Phone"></InputText>
-                        </div>                        
+                        </div>
                     </div>
 
                     <div class="row">
@@ -65,7 +66,7 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-       doctor = await DoctorService.GetDetails(id);
+        doctor = await DoctorService.GetDetails(id);
     }
 
     protected async Task Delete()

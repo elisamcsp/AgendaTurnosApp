@@ -1,5 +1,6 @@
 ﻿using AgendaTurnosApp.Repositories;
 using AgendaTurnosApp.Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace AgendaTurnosApp.Server.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DoctorController : ControllerBase
@@ -43,7 +45,7 @@ namespace AgendaTurnosApp.Server.Controllers
                 ModelState.AddModelError("LastName", "Debe rellenar el campo Apellidos");
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(ModelState);
 
             await _doctorRepository.InsertDoctor(doctor);
             return NoContent();
@@ -60,7 +62,7 @@ namespace AgendaTurnosApp.Server.Controllers
                 ModelState.AddModelError("LastName", "Debe rellenar el campo Apellidos");
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(ModelState);
 
             try
             {

@@ -1,6 +1,7 @@
 ﻿@page "/doctor/create"
 @page "/doctor/edit/{id:int}"
 
+@attribute [Authorize]
 @inject IDoctorService DoctorService
 @inject NavigationManager NavigationManager
 
@@ -37,7 +38,7 @@ else
                         <div class="col-md-12 mb-3">
                             <label for="">Teléfono</label>
                             <InputText class="form-control" @bind-Value="@doctor.Phone"></InputText>
-                        </div>                        
+                        </div>
                     </div>
 
                     <div class="row">
