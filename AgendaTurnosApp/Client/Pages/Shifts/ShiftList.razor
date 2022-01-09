@@ -26,14 +26,14 @@
             <MudTextField @bind-Value="searchString1" Placeholder="Buscar" FullWidth="false" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh><MudTableSortLabel SortBy="new Func<Shift, object>(x=>x.PatientId)">Paciente</MudTableSortLabel> </MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<Shift, object>(x=>x.DoctorId)">Doctor</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Shift, object>(x=>x.PatientFullName)">Paciente</MudTableSortLabel> </MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Shift, object>(x=>x.DoctorFullName)">Doctor</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<Shift, object>(x=>x.ShiftDate)">Fecha</MudTableSortLabel> </MudTh>
             <MudTh></MudTh>
         </HeaderContent>
         <RowTemplate Context="ShiftContext">
-            <MudTd DataLabel="PatientId">@ShiftContext.PatientId</MudTd>
-            <MudTd DataLabel="DoctorId">@ShiftContext.DoctorId</MudTd>
+            <MudTd DataLabel="PatientFullName">@ShiftContext.PatientFullName</MudTd>
+            <MudTd DataLabel="DoctorFullName">@ShiftContext.DoctorFullName</MudTd>
             <MudTd DataLabel="ShiftDate">@ShiftContext.ShiftDate</MudTd>
             <MudTd>
                 <MudIconButton OnClick="@(() => NavigateToEditShift(ShiftContext.Id))"

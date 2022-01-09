@@ -12,5 +12,8 @@ namespace AgendaTurnosApp.Shared
         public int DoctorId { get; set; }
         public int PatientId { get; set; }
         public DateTime ShiftDate { get; set; }
+
+        public string PatientFullName { get; set; }
+        public string DoctorFullName { get; set; }
     }
 }

@@ -29,22 +29,12 @@ else
 
                         <div class="col-md-6 mb-3">
                             <label for="">Turno</label>
-                            <InputSelect class="form-control" readonly @bind-Value="shift.PatientId">
-                                @foreach (var patient in patients)
-                                    {
-                                    <option value="@patient.Id">@patient.FullName</option>
-                                    }
-                            </InputSelect>
+                            <InputText class="form-control" readonly @bind-Value="shift.PatientFullName"></InputText>
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label for="">Doctor</label>                            
-                            <InputSelect class="form-control"  @bind-Value="shift.DoctorId">
-                                @foreach (var doctor in doctors)
-                                    {
-                                    <option value="@doctor.Id">@doctor.FullName</option>
-                                    }
-                            </InputSelect>
+                            <InputText class="form-control" readonly @bind-Value="shift.DoctorFullName"></InputText>
                         </div>
 
                     </div>
@@ -89,20 +79,26 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-
-
         try
         {
             patients = await PacienteService.GetAll();
             doctors = await DoctorService.GetAll();
 
             shift = await ShiftService.GetDetails(id);
+            shift.PatientFullName = patients.FirstOrDefault(p => p.Id == shift.PatientId).FullName;
+            shift.DoctorFullName = doctors.FirstOrDefault(p => p.Id == shift.DoctorId).FullName;
 
         }
         catch (Exception)
         {
             throw;
         }
+    }
+
+    protected async Task ShowName(int id)
+    {
+        await ShiftService.DeleteShift(id);
+        NavigateHome();
     }
 
     protected async Task Delete()

@@ -20,7 +20,8 @@ namespace AgendaTurnosApp.Repositories.Shifts
 
         public async Task<Shift> GetDetails(int id)
         {
-            string sql = "SELECT * FROM Shifts WHERE Id=@Id";
+            string sql = "SELECT * FROM Shifts WHERE Id=@Id";            
+
             Shift result = await _dbConnection.QueryFirstOrDefaultAsync<Shift>(sql, new { Id = id });
 
             return result;
@@ -28,9 +29,18 @@ namespace AgendaTurnosApp.Repositories.Shifts
 
         public async Task<IEnumerable<Shift>> GetAll()
         {
-            string sql = "SELECT * FROM Shifts";
+            string sql = @"select 
+                               s.Id,
+	                           s.PatientId,
+	                           s.DoctorId,
+	                           s.ShiftDate,
+	                           (p.FirstName + ' ' + p.LastName) as PatientFullName, 
+	                           (d.FirstName + ' ' + d.LastName) as DoctorFullName 
+	                           from Shifts s 
+                           inner join Doctors d on s.DoctorId = d.Id 
+                           inner join Patients p on s.PatientId = p.Id";
 
-            return await _dbConnection.QueryAsync<Shift>(sql);
+            return await _dbConnection.QueryAsync<Shift>(sql, new { });
         }
 
         public async Task<bool> InsertShift(Shift Shift)
