@@ -3,41 +3,46 @@
 @attribute [Authorize]
 @inject IDoctorService DoctorService
 
-<h3>Listado de Doctores</h3>
+@inject NavigationManager NavigationManager
 
-<table>
-    <tbody>
-        <tr>
-            <td colspan="2"><a href="doctor/create">Añadir doctor</a></td>
-        </tr>
-    </tbody>
-</table>
+
+<MudButton OnClick="NavigateToAddDoctor" Color="Color.Secondary"> + Añadir doctor</MudButton>
 
 @Message
 
 @if (doctors != null)
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Telefono</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var doctor in doctors)
-            {
-                <tr>
-                    <td>@doctor.FullName</td>
-                    <td>@doctor.Phone</td>
-                    <td><a href="@($"doctor/edit/{doctor.Id}")">Editar</a></td>
-                    <td><a href="@($"doctor/delete/{doctor.Id}")">Eliminar</a></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <MudTable Items="@doctors" Hover="true" Striped="true"
+              Breakpoint="Breakpoint.Sm"
+              Filter="new Func<Doctor,bool>(FilterFunc1)"
+              @bind-SelectedItem="selectedDoctor"
+              SortLabel="Ordenar por">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Listado de Doctores</MudText>
+            <MudToolBarSpacer></MudToolBarSpacer>
+            <MudTextField @bind-Value="searchString1" Placeholder="Buscar" FullWidth="false" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.FullName)">Nombre</MudTableSortLabel> </MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.Phone)">Teléfono</MudTableSortLabel> </MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate Context="DoctorContext">
+            <MudTd DataLabel="Name">@DoctorContext.FullName</MudTd>
+            <MudTd DataLabel="DNI">@DoctorContext.Phone</MudTd>
+            <MudTd>
+                <MudIconButton OnClick="@(() => NavigateToEditDoctor(DoctorContext.Id))"
+                               Icon="@Icons.Material.Filled.Edit" aria-label="edit"></MudIconButton>
+                <MudIconButton OnClick="@(() => NavigateToDeleteDoctor(DoctorContext.Id))"
+                               Icon="@Icons.Material.Filled.Delete" aria-label="delete"></MudIconButton>
+
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+
 }
 else
 {
@@ -49,18 +54,51 @@ else
     public IEnumerable<Doctor> doctors;
     public string Message { get; set; }
 
+    private Doctor selectedDoctor = null;
+    private HashSet<Doctor> selectedItems = new HashSet<Doctor>();
+
+    private string searchString1 = "";
+
     protected async override Task OnInitializedAsync()
     {
         try
         {
             doctors = await DoctorService.GetAll();
-
         }
         catch (Exception e)
         {
-
             Message = "Error... " + e.Message;
         }
+    }
+
+    private void NavigateToAddDoctor()
+    {
+        NavigationManager.NavigateTo("/doctor/create");
+    }
+
+    private void NavigateToDeleteDoctor(int patientId)
+    {
+        NavigationManager.NavigateTo($"doctor/delete/{patientId}");
+    }
+
+    private void NavigateToEditDoctor(int patientId)
+    {
+        NavigationManager.NavigateTo($"doctor/edit/{patientId}");
+    }
+
+    private bool FilterFunc1(Doctor doctorFilter) => FilterFunc(doctorFilter, searchString1);
+
+    private bool FilterFunc(Doctor doctorFilter, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (doctorFilter.FirstName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (doctorFilter.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{doctorFilter.Phone}".Contains(searchString))
+            return true;
+        return false;
     }
 
 }

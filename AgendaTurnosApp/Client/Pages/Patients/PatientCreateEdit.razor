@@ -4,6 +4,7 @@
 @attribute [Authorize]
 @inject IPatientService PatientService
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
 <h3>Paciente</h3>
@@ -60,7 +61,7 @@ else
                         <div class="col-md-4 mb-3">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <input type="button" class="btn btn-success" value="Añadir paciente" @onclick="AddPatient" />
+                            <input type="submit" class="btn btn-success" value="Guardar" />
                             <input type="button" class="btn btn-secondary" value="Cancelar" @onclick="NavigateHome" />
                         </div>
                         <div class="col-md-4 mb-3">
@@ -91,6 +92,7 @@ else
     protected async Task Save()
     {
         await PatientService.SavePatient(patient);
+        Snackbar.Add("Paciente insertado", Severity.Success, a => a.VisibleStateDuration = 200 );
         NavigateHome();
     }
 

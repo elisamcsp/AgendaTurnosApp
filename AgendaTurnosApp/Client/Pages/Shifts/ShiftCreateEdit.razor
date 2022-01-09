@@ -60,7 +60,7 @@ else
                         <div class="col-md-4 mb-3">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <input type="submit" class="btn btn-success" value="Guargar" />
+                            <input type="submit" class="btn btn-success" value="Guardar" />
                             <input type="button" class="btn btn-secondary" value="Cancelar" @onclick="NavigateHome" />
                         </div>
                         <div class="col-md-4 mb-3">
@@ -76,8 +76,8 @@ else
 
 @code {
     public Shift shift;
-    public IEnumerable<Patient> patients;
-    public IEnumerable<Doctor> doctors;
+    public IEnumerable<Patient> patients = new List<Patient>();
+    public IEnumerable<Doctor> doctors = new List<Doctor>();
     public string Message;
 
     [Parameter]

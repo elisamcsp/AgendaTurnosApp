@@ -1,10 +1,14 @@
 ﻿@page "/shift/delete/{id:int}"
 
 @attribute [Authorize]
+
 @inject IShiftService ShiftService
+@inject IPatientService PacienteService
+@inject IDoctorService DoctorService
+
 @inject NavigationManager NavigationManager
 
-<h3>Doctor</h3>
+<h3>Turno</h3>
 
 @Message
 
@@ -15,50 +19,69 @@
 else
 {
 
-    @*<EditForm Model="shift" OnValidSubmit="Delete">
-            <div class="card">
-                <h5 class="card-header"> Datos del turno </h5>
-                <div class="card-body">
-                    <div class="container">
+    <EditForm Model="shift" OnValidSubmit="Delete">
+        <div class="card">
+            <h5 class="card-header"> Datos del Turno </h5>
+            <div class="card-body">
+                <div class="container">
 
-                        <div class="row">
+                    <div class="row">
 
-                            <div class="col-md-6 mb-3">
-                                <label for="">Nombre</label>
-                                <InputText class="form-control" readonly @bind-Value="@shift.PatientId.ToString()"></InputText>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="">Apellidos</label>
-                                <InputText class="form-control" readonly @bind-Value="@shift.DoctorId.ToString()"></InputText>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="">DNI/NIE/TIE</label>
-                                <InputDate class="form-control" readonly @bind-Value="@shift.ShiftDate"></InputDate>
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="">Turno</label>
+                            <InputSelect class="form-control" readonly @bind-Value="shift.PatientId">
+                                @foreach (var patient in patients)
+                                    {
+                                    <option value="@patient.Id">@patient.FullName</option>
+                                    }
+                            </InputSelect>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <input type="submit" class="btn btn-danger" value="Eliminar" />
-                                <input type="button" class="btn btn-secondary" value="Cancelar" @onclick="NavigateHome" />
-                            </div>
-                            <div class="col-md-4 mb-3">
-                            </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="">Doctor</label>                            
+                            <InputSelect class="form-control"  @bind-Value="shift.DoctorId">
+                                @foreach (var doctor in doctors)
+                                    {
+                                    <option value="@doctor.Id">@doctor.FullName</option>
+                                    }
+                            </InputSelect>
                         </div>
+
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label for="">Fecha Turno</label>
+                            <InputDate class="form-control" readonly @bind-Value="@shift.ShiftDate"></InputDate>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-4 mb-3">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <input type="submit" class="btn btn-danger" value="Eliminar" />
+                            <input type="button" class="btn btn-secondary" value="Cancelar" @onclick="NavigateHome" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                        </div>
+
                     </div>
                 </div>
             </div>
-        </EditForm>*@
+        </div>
+    </EditForm>
 
 }
 
 @code {
-    public Shift shift;
+    public Shift shift = new Shift();
+
+    public IEnumerable<Patient> patients = new List<Patient>();
+    public IEnumerable<Doctor> doctors = new List<Doctor>();
+
     public string Message;
 
     [Parameter]
@@ -66,7 +89,20 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        shift = await ShiftService.GetDetails(id);
+
+
+        try
+        {
+            patients = await PacienteService.GetAll();
+            doctors = await DoctorService.GetAll();
+
+            shift = await ShiftService.GetDetails(id);
+
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     protected async Task Delete()

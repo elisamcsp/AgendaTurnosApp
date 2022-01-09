@@ -1,45 +1,52 @@
 ﻿@page "/shift/list"
 
 @attribute [Authorize]
+
 @inject IShiftService ShiftService
+@inject IPatientService PatientService
+@inject IDoctorService DoctorService
 
-<h3>Listado de Turnos</h3>
+@inject NavigationManager NavigationManager
 
-<table>
-    <tbody>
-        <tr>
-            <td colspan="2"><a href="shift/create">Añadir turno</a></td>
-        </tr>
-    </tbody>
-</table>
+<MudButton OnClick="NavigateToAddShift" Color="Color.Secondary"> + Añadir turno</MudButton>
 
 @Message
 
 @if (shifts != null)
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Paciente</th>
-                <th>Doctor</th>
-                <th>Fecha</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var shift in shifts)
-            {
-                <tr>
-                    <td>@shift.PatientId</td>
-                    <td>@shift.DoctorId</td>
-                    <td>@shift.ShiftDate</td>
-                    <td><a href="@($"shift/edit/{shift.Id}")">Editar</a></td>
-                    <td><a href="@($"shift/delete/{shift.Id}")">Eliminar</a></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+
+    <MudTable Items="@shifts" Hover="true" Striped="true"
+              Breakpoint="Breakpoint.Sm"
+              Filter="new Func<Shift,bool>(FilterFunc1)"
+              @bind-SelectedItem="selectedShift"
+              SortLabel="Ordenar por">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Listado de Turnos</MudText>
+            <MudToolBarSpacer></MudToolBarSpacer>
+            <MudTextField @bind-Value="searchString1" Placeholder="Buscar" FullWidth="false" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<Shift, object>(x=>x.PatientId)">Paciente</MudTableSortLabel> </MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Shift, object>(x=>x.DoctorId)">Doctor</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Shift, object>(x=>x.ShiftDate)">Fecha</MudTableSortLabel> </MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate Context="ShiftContext">
+            <MudTd DataLabel="PatientId">@ShiftContext.PatientId</MudTd>
+            <MudTd DataLabel="DoctorId">@ShiftContext.DoctorId</MudTd>
+            <MudTd DataLabel="ShiftDate">@ShiftContext.ShiftDate</MudTd>
+            <MudTd>
+                <MudIconButton OnClick="@(() => NavigateToEditShift(ShiftContext.Id))"
+                               Icon="@Icons.Material.Filled.Edit" aria-label="edit"></MudIconButton>
+                <MudIconButton OnClick="@(() => NavigateToDeleteShift(ShiftContext.Id))"
+                               Icon="@Icons.Material.Filled.Delete" aria-label="delete"></MudIconButton>
+
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
 }
 else
 {
@@ -48,6 +55,12 @@ else
 
 @code {
     public IEnumerable<Shift> shifts;
+
+    private Shift selectedShift = null;
+    private HashSet<Shift> selectedItems = new HashSet<Shift>();
+
+    private string searchString1 = "";
+
     public string Message { get; set; }
 
     protected async override Task OnInitializedAsync()
@@ -55,7 +68,6 @@ else
         try
         {
             shifts = await ShiftService.GetAll();
-
         }
         catch (Exception e)
         {
@@ -64,4 +76,28 @@ else
         }
     }
 
+    private void NavigateToAddShift()
+    {
+        NavigationManager.NavigateTo("shift/create");
+    }
+
+    private void NavigateToDeleteShift(int shiftId)
+    {
+        NavigationManager.NavigateTo($"shift/delete/{shiftId}");
+    }
+
+    private void NavigateToEditShift(int shiftId)
+    {
+        NavigationManager.NavigateTo($"shift/edit/{shiftId}");
+    }
+
+    private bool FilterFunc1(Shift shiftFilter) => FilterFunc(shiftFilter, searchString1);
+
+    private bool FilterFunc(Shift shiftFilter, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        
+        return false;
+    }
 }

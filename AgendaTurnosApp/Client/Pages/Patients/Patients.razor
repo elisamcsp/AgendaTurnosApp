@@ -4,65 +4,50 @@
 @inject IPatientService PatientService
 @inject IDialogService DialogService
 
-<h3>Listado de Pacientes</h3>
+@inject NavigationManager NavigationManager
 
-<MudButton OnClick="AddPatient"> Añadir paciente</MudButton>
+<MudButton OnClick="NavigateToAddPatient" Color="Color.Secondary"> + Añadir paciente</MudButton>
 
 @Message
 
 @if (patients != null && patients.Any())
 {
-    <MudTable Items="patients" Hover="true" Breakpoint="Breakpoint.Sm">
-        <ToolBarContent>
-            <MudText Typo="Typo.h6">Listado de Pacientes</MudText>
-        </ToolBarContent>
-        <HeaderContent>            
-            <MudTh>Nombre</MudTh>
-            <MudTh>DNI</MudTh>
-            <MudTh>Fecha Nacimiento</MudTh>
-            <MudTh>Telefono</MudTh>
-            <MudTh>Dirección</MudTh>
-            <MudTh ></MudTh>
-            <MudTh></MudTh>
-        </HeaderContent>
-        <RowTemplate Context="PatientContext">
-            <MudTd DataLabel="Name">@PatientContext.FullName</MudTd>
-            <MudTd DataLabel="DNI">@PatientContext.DNI</MudTd>
-            <MudTd DataLabel="BirthDate">@PatientContext.BirthDate</MudTd>
-            <MudTd DataLabel="Phone">@PatientContext.Phone</MudTd>
-            <MudTd DataLabel="Address">@PatientContext.Address</MudTd>
-            <MudTd></MudTd>
-            <MudTd></MudTd>
-        </RowTemplate>
-    </MudTable>
+<MudTable Items="@patients" Hover="true" Striped="true" 
+          Breakpoint="Breakpoint.Sm" 
+          Filter="new Func<Patient,bool>(FilterFunc1)" 
+          @bind-SelectedItem="selectedPatient"
+          SortLabel="Ordenar por">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Listado de Pacientes</MudText>
+        <MudToolBarSpacer></MudToolBarSpacer>
+        <MudTextField @bind-Value="searchString1" Placeholder="Buscar" FullWidth="false" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" ></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.FullName)">Nombre</MudTableSortLabel> </MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.DNI)">DNI</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.BirthDate)">Fecha Nacimiento</MudTableSortLabel> </MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.Phone)">Teléfono</MudTableSortLabel> </MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.Address)">Dirección</MudTableSortLabel></MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate Context="PatientContext">
+        <MudTd DataLabel="Name">@PatientContext.FullName</MudTd>
+        <MudTd DataLabel="DNI">@PatientContext.DNI</MudTd>
+        <MudTd DataLabel="BirthDate">@PatientContext.BirthDate</MudTd>
+        <MudTd DataLabel="Phone">@PatientContext.Phone</MudTd>
+        <MudTd DataLabel="Address">@PatientContext.Address</MudTd>
+        <MudTd>
+            <MudIconButton OnClick="@(() => NavigateToEditPatient(PatientContext.Id))"
+                           Icon="@Icons.Material.Filled.Edit" aria-label="edit"></MudIconButton>
+            <MudIconButton OnClick="@(() => NavigateToDeletePatient(PatientContext.Id))"
+                           Icon="@Icons.Material.Filled.Delete" aria-label="delete"></MudIconButton>
 
-    @*<table class="table">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>DNI</th>
-                <th>Fecha Nacimiento</th>
-                <th>Telefono</th>
-                <th>Dirección</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var patient in patients)
-            {
-                <tr>
-                    <td>@patient.FullName</td>
-                    <td>@patient.DNI</td>
-                    <td>@patient.BirthDate</td>
-                    <td>@patient.Phone</td>
-                    <td>@patient.Address</td>
-                    <td><a href="@($"patient/edit/{patient.Id}")">Editar</a></td>
-                    <td><a href="@($"patient/delete/{patient.Id}")">Eliminar</a></td>
-                </tr>
-            }
-        </tbody>
-    </table>*@
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
 }
 else
 {
@@ -70,9 +55,14 @@ else
 }
 
 @code {
-    //private Patient patient;
     public Patient patient = new Patient();
-    public IEnumerable<Patient> patients;
+    public IEnumerable<Patient> patients = new List<Patient>();
+
+    private Patient selectedPatient = null;
+    private HashSet<Patient> selectedItems = new HashSet<Patient>();
+
+    private string searchString1 = "";
+
     public string Message { get; set; }
 
     protected async override Task OnInitializedAsync()
@@ -100,6 +90,38 @@ else
             if (result.Data != null)
                 patient = (Patient) result.Data;
         }
+    }
+
+    private void NavigateToAddPatient()
+    {
+        NavigationManager.NavigateTo("/patient/create");
+    }
+
+    private void NavigateToDeletePatient(int patientId)
+    {
+        NavigationManager.NavigateTo($"patient/delete/{patientId}");
+    }
+
+    private void NavigateToEditPatient(int patientId)
+    {
+        NavigationManager.NavigateTo($"patient/edit/{patientId}");
+    }
+
+    private bool FilterFunc1(Patient patientFilter) => FilterFunc(patientFilter, searchString1);
+
+    private bool FilterFunc(Patient patientFilter, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (patientFilter.FirstName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (patientFilter.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (patientFilter.DNI.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{patientFilter.Address} {patientFilter.BirthDate} {patientFilter.Phone}".Contains(searchString))
+            return true;
+        return false;
     }
 
 
