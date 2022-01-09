@@ -5,6 +5,8 @@
 @inject IShiftService ShiftService
 @inject IPatientService PacienteService
 @inject IDoctorService DoctorService
+@inject ISnackbar Snackbar
+
 @inject NavigationManager NavigationManager
 
 <h3>Turno</h3>
@@ -26,33 +28,35 @@ else
                     <div class="row">
 
                         <div class="col-md-6 mb-3">
-                            <label for="">Turno</label>
-                            <InputSelect class="form-control" @bind-Value="shift.PatientId">
+                            <MudSelect Label="Paciente" @bind-Value="@shift.PatientId" Placeholder="Seleccione un paciente"
+                                       AdornmentIcon="@Icons.Material.Filled.Fastfood" AdornmentColor="Color.Primary">
                                 @foreach (var patient in patients)
                                     {
-                                    <option value="@patient.Id">@patient.FullName</option>
+                                    <MudSelectItem Value="@(patient.Id)">@(patient.FullName)</MudSelectItem>
                                     }
-                            </InputSelect>
+                            </MudSelect>
+                            <ValidationMessage For="@( () => shift.PatientId )" />
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="">Doctor</label>
-                            <InputSelect class="form-control " @bind-Value="shift.DoctorId">
+                            <MudSelect Label="Doctor" @bind-Value="@shift.DoctorId" Placeholder="Seleccione un doctor"
+                                       AdornmentIcon="@Icons.Material.Filled.Fastfood" AdornmentColor="Color.Primary">
                                 @foreach (var doctor in doctors)
                                     {
-                                    <option value="@doctor.Id">@doctor.FullName</option>
+                                    <MudSelectItem Value="@(doctor.Id)">@(doctor.FullName)</MudSelectItem>
                                     }
-                            </InputSelect>
-                        </div>
+                            </MudSelect>
 
+                            <ValidationMessage For="@( () => shift.DoctorId )" />
+                        </div>
                     </div>
                     <div class="row">
 
                         <div class="col-md-6 mb-3">
-                            <label for="">Fecha Turno</label>
                             <InputDate class="form-control" @bind-Value="@shift.ShiftDate"></InputDate>
+                            
+                            <ValidationMessage For="@(()=>shift.ShiftDate)" />
                         </div>
-
                     </div>
 
                     <div class="row">
@@ -65,16 +69,16 @@ else
                         </div>
                         <div class="col-md-4 mb-3">
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
+        <DataAnnotationsValidator />
     </EditForm>
 
 }
 
-@code {
+@code {    
     public Shift shift;
     public IEnumerable<Patient> patients = new List<Patient>();
     public IEnumerable<Doctor> doctors = new List<Doctor>();
@@ -93,9 +97,9 @@ else
             if (id == 0)
                 shift = new Shift()
                 {
-                    PatientId = 1,
-                    DoctorId = 1,
-                    ShiftDate = DateTime.Now
+                    PatientId = patients.FirstOrDefault().Id,
+                    DoctorId = doctors.FirstOrDefault().Id,
+                    ShiftDate = DateTime.Today
                 };
             else
                 shift = await ShiftService.GetDetails(id);
@@ -109,6 +113,7 @@ else
     protected async Task Save()
     {
         await ShiftService.SaveShift(shift);
+        Snackbar.Add("Turno insertado", Severity.Success, a => a.VisibleStateDuration = 200);
         NavigateHome();
     }
 

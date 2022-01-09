@@ -6,8 +6,8 @@
 
 <AuthorizeView>
     <Authorized>
-        <a href="authentication/profile">Hello, @context.User.Identity.Name!</a>
-        <button class="nav-link btn btn-link" @onclick="BeginSignOut">Log out</button>
+        <a href="authentication/profile">Bienvenido, @context.User.Identity.Name!</a>
+        <button class="nav-link btn btn-link" @onclick="BeginSignOut" title="Cerrar sesión"> <span class="oi oi-account-logout" aria-hidden="true"></span></button>
     </Authorized>
     <NotAuthorized>
         <a href="authentication/register">Register</a>

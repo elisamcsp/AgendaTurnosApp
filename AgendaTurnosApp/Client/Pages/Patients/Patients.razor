@@ -33,7 +33,7 @@
     <RowTemplate Context="PatientContext">
         <MudTd DataLabel="Name">@PatientContext.FullName</MudTd>
         <MudTd DataLabel="DNI">@PatientContext.DNI</MudTd>
-        <MudTd DataLabel="BirthDate">@PatientContext.BirthDate</MudTd>
+        <MudTd DataLabel="BirthDate">@PatientContext.BirthDate.ToShortDateString()</MudTd>
         <MudTd DataLabel="Phone">@PatientContext.Phone</MudTd>
         <MudTd DataLabel="Address">@PatientContext.Address</MudTd>
         <MudTd>

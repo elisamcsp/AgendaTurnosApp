@@ -34,7 +34,7 @@
         <RowTemplate Context="ShiftContext">
             <MudTd DataLabel="PatientFullName">@ShiftContext.PatientFullName</MudTd>
             <MudTd DataLabel="DoctorFullName">@ShiftContext.DoctorFullName</MudTd>
-            <MudTd DataLabel="ShiftDate">@ShiftContext.ShiftDate</MudTd>
+            <MudTd DataLabel="ShiftDate">@ShiftContext.ShiftDate.Date.ToShortDateString()</MudTd>
             <MudTd>
                 <MudIconButton OnClick="@(() => NavigateToEditShift(ShiftContext.Id))"
                                Icon="@Icons.Material.Filled.Edit" aria-label="edit"></MudIconButton>

@@ -3,6 +3,7 @@
 
 @attribute [Authorize]
 @inject IDoctorService DoctorService
+@inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
 <h3>Doctor</h3>
@@ -27,11 +28,13 @@ else
                         <div class="col-md-6 mb-3">
                             <label for="">Nombre</label>
                             <InputText class="form-control" @bind-Value="@doctor.FirstName"></InputText>
+                            <ValidationMessage For="@(() => doctor.FirstName)" />
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label for="">Apellidos</label>
                             <InputText class="form-control" @bind-Value="@doctor.LastName"></InputText>
+                            <ValidationMessage For="@(() => doctor.LastName)" />
                         </div>
                     </div>
                     <div class="row">
@@ -54,6 +57,7 @@ else
                 </div>
             </div>
         </div>
+        <DataAnnotationsValidator />
     </EditForm>
 
 }
@@ -76,6 +80,7 @@ else
     protected async Task Save()
     {
         await DoctorService.SaveDoctor(doctor);
+        Snackbar.Add("Doctor insertado", Severity.Success, a => a.VisibleStateDuration = 200);
         NavigateHome();
     }
 

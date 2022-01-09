@@ -29,21 +29,25 @@ else
                         <div class="col-md-6 mb-3">
                             <label for="">Nombre</label>
                             <InputText class="form-control" @bind-Value="@patient.FirstName"></InputText>
+                            <ValidationMessage For="@( () => patient.FirstName )" />
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label for="">Apellidos</label>
                             <InputText class="form-control" @bind-Value="@patient.LastName"></InputText>
+                            <ValidationMessage For="@( () => patient.LastName )" />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="">DNI/NIE/TIE</label>
                             <InputText class="form-control" @bind-Value="@patient.DNI"></InputText>
+                            <ValidationMessage For="@( () => patient.DNI )" />
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="">Fecha Nacimiento</label>
                             <InputDate class="form-control" @bind-Value="@patient.BirthDate"></InputDate>
+                            <ValidationMessage For="@( () => patient.BirthDate )" />
                         </div>
                     </div>
                     <div class="row">
@@ -70,6 +74,7 @@ else
                 </div>
             </div>
         </div>
+        <DataAnnotationsValidator />
     </EditForm>
 
 }
@@ -84,7 +89,10 @@ else
     protected async override Task OnInitializedAsync()
     {
         if (id == 0)
+        {
             patient = new Patient();
+            patient.BirthDate = DateTime.Now;
+        }
         else
             patient = await PatientService.GetDetails(id);
     }
@@ -92,7 +100,7 @@ else
     protected async Task Save()
     {
         await PatientService.SavePatient(patient);
-        Snackbar.Add("Paciente insertado", Severity.Success, a => a.VisibleStateDuration = 200 );
+        Snackbar.Add("Paciente insertado", Severity.Success, a => a.VisibleStateDuration = 200);
         NavigateHome();
     }
 
@@ -111,8 +119,8 @@ else
 
         if (!result.Cancelled)
         {
-            if(result.Data != null)
-                patient = (Patient) result.Data;
+            if (result.Data != null)
+                patient = (Patient)result.Data;
         }
     }
 }
