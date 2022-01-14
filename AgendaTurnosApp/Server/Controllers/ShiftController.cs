@@ -80,5 +80,13 @@ namespace AgendaTurnosApp.Server.Controllers
         {
             await _shiftRepository.DelteShift(id);
         }
+
+        [HttpGet("date")]
+        public async Task<IEnumerable<Shift>> GetShiftByDate()
+        {
+            DateTime date = DateTime.Today;
+            var list = await _shiftRepository.GetAllByDate(date);
+            return list;           
+        }
     }
 }

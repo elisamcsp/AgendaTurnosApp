@@ -6,19 +6,33 @@
 
 <AuthorizeView>
     <Authorized>
-        <a href="authentication/profile">Bienvenido, @context.User.Identity.Name!</a>
-        <button class="nav-link btn btn-link" @onclick="BeginSignOut" title="Cerrar sesión"> <span class="oi oi-account-logout" aria-hidden="true"></span></button>
+        <a class="mr-3" href="authentication/profile" style="color:white;">Bienvenido, @context.User.Identity.Name!</a>
+        @*<button class="nav-link btn btn-link" @onclick="BeginSignOut" title="Cerrar sesión"> <span class="oi oi-account-logout" aria-hidden="true"></span></button>*@
+        @*<MudLink Href="authentication/profile" Underline="Underline.None" Color="Color.Secondary">Bienvenido, @context.User.Identity.Name!</MudLink>*@
+        <MudIconButton Icon="@Icons.Material.Filled.Logout" @onclick="BeginSignOut" Variant="Variant.Outlined" Color="Color.Inherit" Size="Size.Small" title="Cerrar sesión" />
+
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/register">Register</a>
-        <a href="authentication/login">Log in</a>
+        @*<a href="authentication/register">Register</a>
+            <a href="authentication/login">Log in</a>*@
+        <MudIconButton Icon="@Icons.Material.Filled.Login" @onclick="NavigateToLogin" Variant="Variant.Outlined" Color="Color.Inherit" Size="Size.Small" title="Iniciar sesión" />
     </NotAuthorized>
 </AuthorizeView>
 
 @code{
+    public string authenticationProfile = "authentication/profile";
     private async Task BeginSignOut(MouseEventArgs args)
     {
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
+    }
+
+    private void NavigateToLogin()
+    {
+        Navigation.NavigateTo("authentication/login");
+    }
+    private void NavigateToRegister()
+    {
+        Navigation.NavigateTo("authentication/register");
     }
 }

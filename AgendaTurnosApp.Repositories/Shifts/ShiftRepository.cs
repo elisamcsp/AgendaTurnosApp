@@ -38,7 +38,7 @@ namespace AgendaTurnosApp.Repositories.Shifts
 	                           (d.FirstName + ' ' + d.LastName) as DoctorFullName 
 	                           from Shifts s 
                            inner join Doctors d on s.DoctorId = d.Id 
-                           inner join Patients p on s.PatientId = p.Id";
+                           inner join Patients p on s.PatientId = p.Id ";
 
             return await _dbConnection.QueryAsync<Shift>(sql, new { });
         }
@@ -104,6 +104,32 @@ namespace AgendaTurnosApp.Repositories.Shifts
             {
                 throw e;
             }
+        }
+
+        public async Task<IEnumerable<Shift>> GetAllByDate(DateTime shiftDate)
+        {
+            try
+            {
+                string sql = @"select 
+                                  s.Id,
+	                              s.PatientId,
+	                              s.DoctorId,
+	                              s.ShiftDate,
+	                              (p.FirstName + ' ' + p.LastName) as PatientFullName, 
+	                              (d.FirstName + ' ' + d.LastName) as DoctorFullName 
+	                              from Shifts s 
+                                  left join Doctors d on s.DoctorId = d.Id 
+                                  left join Patients p on s.PatientId = p.Id
+                               where cast ( s.ShiftDate as date ) = @ShiftDate and 
+                                     ((s.DoctorId is not null and s.PatientId is not null) or (s.DoctorId > 0 and s.PatientId > 0 ))
+                               order by (s.ShiftDate) desc";
+
+                return await _dbConnection.QueryAsync<Shift>(sql, new { ShiftDate = shiftDate });
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }            
         }
     }
 }

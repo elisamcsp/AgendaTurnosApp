@@ -1,4 +1,5 @@
 ﻿using AgendaTurnosApp.Shared;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -36,6 +37,20 @@ namespace AgendaTurnosApp.Client.Services
         public async Task DeleteShift(int id)
         {
             await _httpClient.DeleteAsync($"api/shift/{id}");
+        }
+
+        public async Task<IEnumerable<Shift>> GetAllByDate()
+        {
+            var shifts = await _httpClient.GetFromJsonAsync<IEnumerable<Shift>>($"api/shift/date");
+
+            if (shifts != null)
+            {
+                return shifts;
+            }
+            else
+            {
+                return new List<Shift>();
+            }
         }
     }
 

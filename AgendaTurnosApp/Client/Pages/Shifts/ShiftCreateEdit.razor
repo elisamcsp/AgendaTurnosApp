@@ -54,7 +54,8 @@ else
 
                         <div class="col-md-6 mb-3">
                             <InputDate class="form-control" @bind-Value="@shift.ShiftDate"></InputDate>
-                            
+                            <MudTimePicker Label="24 hours" @bind-Time="@time" />
+
                             <ValidationMessage For="@(()=>shift.ShiftDate)" />
                         </div>
                     </div>
@@ -80,9 +81,10 @@ else
 
 @code {    
     public Shift shift;
-    public IEnumerable<Patient> patients = new List<Patient>();
-    public IEnumerable<Doctor> doctors = new List<Doctor>();
+    public IEnumerable<Patient> patients ;
+    public IEnumerable<Doctor> doctors;
     public string Message;
+    public TimeSpan? time = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 00);
 
     [Parameter]
     public int id { get; set; }
@@ -91,8 +93,8 @@ else
     {
         try
         {
-            patients = await PacienteService.GetAll();
-            doctors = await DoctorService.GetAll();
+            patients = await PacienteService.GetAll() == null ? new List<Patient>() : await PacienteService.GetAll();
+            doctors = await DoctorService.GetAll() == null ? new List<Doctor>() : await DoctorService.GetAll();
 
             if (id == 0)
                 shift = new Shift()
@@ -101,8 +103,10 @@ else
                     DoctorId = doctors.FirstOrDefault().Id,
                     ShiftDate = DateTime.Today
                 };
-            else
+            else {
                 shift = await ShiftService.GetDetails(id);
+                time = new TimeSpan(shift.ShiftDate.Ticks);
+            }
         }
         catch (Exception)
         {
@@ -112,6 +116,7 @@ else
 
     protected async Task Save()
     {
+        shift.ShiftDate = shift.ShiftDate.Add((TimeSpan) time);
         await ShiftService.SaveShift(shift);
         Snackbar.Add("Turno insertado", Severity.Success, a => a.VisibleStateDuration = 200);
         NavigateHome();

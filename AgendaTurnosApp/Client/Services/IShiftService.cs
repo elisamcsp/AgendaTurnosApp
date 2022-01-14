@@ -10,6 +10,7 @@ namespace AgendaTurnosApp.Client.Services
     {
         Task DeleteShift(int id);
         Task<IEnumerable<Shift>> GetAll();
+        Task<IEnumerable<Shift>> GetAllByDate();
         Task<Shift> GetDetails(int id);
         Task SaveShift(Shift shift);
     }

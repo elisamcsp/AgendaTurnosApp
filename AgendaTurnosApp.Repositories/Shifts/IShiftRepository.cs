@@ -11,6 +11,7 @@ namespace AgendaTurnosApp.Repositories.Shifts
     {
         Task<int> DelteShift(int id);
         Task<IEnumerable<Shift>> GetAll();
+        Task<IEnumerable<Shift>> GetAllByDate(DateTime shiftDate);
         Task<Shift> GetDetails(int id);
         Task<bool> InsertShift(Shift Shift);
         Task<bool> UpdateShift(Shift Shift);

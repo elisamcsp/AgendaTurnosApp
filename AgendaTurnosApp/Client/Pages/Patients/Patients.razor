@@ -56,7 +56,7 @@ else
 
 @code {
     public Patient patient = new Patient();
-    public IEnumerable<Patient> patients = new List<Patient>();
+    public IEnumerable<Patient> patients ;
 
     private Patient selectedPatient = null;
     private HashSet<Patient> selectedItems = new HashSet<Patient>();
@@ -69,6 +69,7 @@ else
     {
         try
         {
+
             patients = await PatientService.GetAll();
 
         }

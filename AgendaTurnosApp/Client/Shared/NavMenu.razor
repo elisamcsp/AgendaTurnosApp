@@ -1,11 +1,29 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@*<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">Agenda de Turnos </a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
-</div>
+</div>*@
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+<MudNavMenu Class="pt-3">
+    <MudNavLink Href="/" Match="NavLinkMatch.All">
+        <span class="oi oi-dashboard" aria-hidden="true"></span>Dashboard
+    </MudNavLink>
+    <MudNavLink Href="patient/list" Match="NavLinkMatch.Prefix">
+        <span class="oi oi-people" aria-hidden="true"></span> Pacientes
+    </MudNavLink>
+    <MudNavLink Href="shift/list" Match="NavLinkMatch.Prefix">
+        <span class="oi oi-calendar" aria-hidden="true"></span>Turnos
+    </MudNavLink>
+    <MudNavLink Href="doctor/list" Match="NavLinkMatch.Prefix">
+        <span class="oi oi-medical-cross" aria-hidden="true"></span>Doctores
+    </MudNavLink>
+    <MudNavGroup Title="Datos" Expanded="true">
+
+    </MudNavGroup>
+</MudNavMenu>
+
+<!--<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -26,14 +44,14 @@
             <NavLink class="nav-link" href="doctor/list">
                 <span class="oi oi-medical-cross" aria-hidden="true"></span> Doctores
             </NavLink>
-        </li>
+        </li>-->
         @*<li class="nav-item px-3">
             <NavLink class="nav-link" href="fetchdata">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
             </NavLink>
         </li>*@
-    </ul>
-</div>
+    <!--</ul>
+</div>-->
 
 
 @code {

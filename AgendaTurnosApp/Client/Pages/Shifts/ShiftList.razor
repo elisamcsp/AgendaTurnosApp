@@ -8,7 +8,9 @@
 
 @inject NavigationManager NavigationManager
 
-<MudButton OnClick="NavigateToAddShift" Color="Color.Secondary"> + Añadir turno</MudButton>
+@if (activateAddShift) { 
+    <MudButton OnClick="NavigateToAddShift" Color="Color.Secondary"> + Añadir turno</MudButton>
+}
 
 @Message
 
@@ -55,6 +57,7 @@ else
 
 @code {
     public IEnumerable<Shift> shifts;
+    public bool activateAddShift = false;
 
     private Shift selectedShift = null;
     private HashSet<Shift> selectedItems = new HashSet<Shift>();
@@ -67,6 +70,13 @@ else
     {
         try
         {
+            var a = await PatientService.GetAll();
+            var b = await DoctorService.GetAll();
+            if (a.Any() && b.Any())
+                activateAddShift = true;
+            else
+                activateAddShift = false;
+
             shifts = await ShiftService.GetAll();
         }
         catch (Exception e)
@@ -97,7 +107,7 @@ else
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        
+
         return false;
     }
 }

@@ -1,7 +1,41 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+@attribute [Authorize]
+@inject IShiftService ShiftService
 
-Welcome to your new app.
+<MudElement HtmlTag="h2">
+    Consultas del día: <code style="color:red;">@DateTime.Today.ToShortDateString()</code>
+</MudElement>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@*Welcome to your new app.*@
+@if (shifts != null && shifts.Count() > 0)
+{
+    foreach (var shift in shifts)
+    {
+        <ShiftCardst Shift="@shift" />
+    }
+}
+else
+{
+    <em>Cargando...</em>
+}
+
+@code{
+    public IEnumerable<Shift> shifts;
+    public string Message { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        try
+        {
+            shifts = await ShiftService.GetAllByDate() != null ? await ShiftService.GetAllByDate() : new List<Shift>() ;
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+
+    }
+
+}
