@@ -7,8 +7,6 @@
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 
-<h3>Paciente</h3>
-
 @Message
 
 @if (patient == null)
@@ -99,9 +97,20 @@ else
 
     protected async Task Save()
     {
-        await PatientService.SavePatient(patient);
-        Snackbar.Add("Paciente insertado", Severity.Success, a => a.VisibleStateDuration = 200);
-        NavigateHome();
+        bool status = await PatientService.SavePatient(patient);
+
+        if (status)
+        {
+
+            Snackbar.Add("Paciente insertado", Severity.Success, a => a.VisibleStateDuration = 200);
+            NavigateHome();
+
+        }
+        else
+        {
+            Snackbar.Add("Ya existe un paciente con el mismo DNI insertado.", Severity.Error);
+
+        }
     }
 
     private void NavigateHome()

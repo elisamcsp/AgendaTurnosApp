@@ -2,14 +2,16 @@
 @page "/shift/edit/{id:int}"
 
 @attribute [Authorize]
+@inject HttpClient Http
+
 @inject IShiftService ShiftService
 @inject IPatientService PacienteService
 @inject IDoctorService DoctorService
 @inject ISnackbar Snackbar
 
+
 @inject NavigationManager NavigationManager
 
-<h3>Turno</h3>
 
 @Message
 
@@ -20,6 +22,7 @@
 else
 {
     <EditForm Model="shift" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
         <div class="card">
             <h5 class="card-header"> Datos del Turno </h5>
             <div class="card-body">
@@ -53,10 +56,8 @@ else
                     <div class="row">
 
                         <div class="col-md-6 mb-3">
-                            <InputDate class="form-control" @bind-Value="@shift.ShiftDate"></InputDate>
-                            <MudTimePicker Label="24 hours" @bind-Time="@time" />
-
-                            <ValidationMessage For="@(()=>shift.ShiftDate)" />
+                            <InputDate class="form-control" @bind-Value="@shift.ShiftDate"></InputDate>                            
+                            <ValidationMessage For="@( () => shift.ShiftDate )" />
                         </div>
                     </div>
 
@@ -74,17 +75,16 @@ else
                 </div>
             </div>
         </div>
-        <DataAnnotationsValidator />
+
     </EditForm>
 
 }
 
-@code {    
+@code {
     public Shift shift;
-    public IEnumerable<Patient> patients ;
+    public IEnumerable<Patient> patients;
     public IEnumerable<Doctor> doctors;
-    public string Message;
-    public TimeSpan? time = new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, 00);
+    public string Message;    
 
     [Parameter]
     public int id { get; set; }
@@ -103,9 +103,9 @@ else
                     DoctorId = doctors.FirstOrDefault().Id,
                     ShiftDate = DateTime.Today
                 };
-            else {
-                shift = await ShiftService.GetDetails(id);
-                time = new TimeSpan(shift.ShiftDate.Ticks);
+            else
+            {
+                shift = await ShiftService.GetDetails(id);                
             }
         }
         catch (Exception)
@@ -116,10 +116,21 @@ else
 
     protected async Task Save()
     {
-        shift.ShiftDate = shift.ShiftDate.Add((TimeSpan) time);
-        await ShiftService.SaveShift(shift);
-        Snackbar.Add("Turno insertado", Severity.Success, a => a.VisibleStateDuration = 200);
-        NavigateHome();
+        bool status = await ShiftService.SaveShift(shift);
+
+        if (status)
+        {
+
+            Snackbar.Add("Turno insertado", Severity.Success, a => a.VisibleStateDuration = 200);
+
+            NavigateHome();
+
+        }
+        else
+        {            
+            Snackbar.Add("El paciente ya tiene un turno asignado en la fecha seleccionada.", Severity.Error);
+
+        }
     }
 
     private void NavigateHome()

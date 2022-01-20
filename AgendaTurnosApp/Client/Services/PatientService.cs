@@ -25,12 +25,16 @@ namespace AgendaTurnosApp.Client.Services
             return await _httpClient.GetFromJsonAsync<IEnumerable<Patient>>($"api/patient");
         }
 
-        public async Task SavePatient(Patient patient)
+        public async Task<bool> SavePatient(Patient patient)
         {
+            HttpResponseMessage statusCode = new HttpResponseMessage();
+
             if (patient.Id == 0)
-                await _httpClient.PostAsJsonAsync($"api/patient", patient);
+                statusCode = await _httpClient.PostAsJsonAsync($"api/patient", patient);
             else
-                await _httpClient.PutAsJsonAsync($"api/patient/{patient.Id}", patient);
+                statusCode = await _httpClient.PutAsJsonAsync($"api/patient/{patient.Id}", patient);
+
+            return statusCode.IsSuccessStatusCode;
         }
 
         public async Task DeletePatient(int id)

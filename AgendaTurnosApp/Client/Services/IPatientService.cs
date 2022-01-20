@@ -9,6 +9,6 @@ namespace AgendaTurnosApp.Client.Services
         Task DeletePatient(int id);
         Task<IEnumerable<Patient>> GetAll();
         Task<Patient> GetDetails(int id);
-        Task SavePatient(Patient patient);
+        Task<bool> SavePatient(Patient patient);
     }
 }

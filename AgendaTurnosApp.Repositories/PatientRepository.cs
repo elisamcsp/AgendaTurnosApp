@@ -23,11 +23,11 @@ namespace AgendaTurnosApp.Repositories
             return result;
         
         }
-        public async Task<IEnumerable<Patient>> GetAll()
+        public async Task<IEnumerable<Patient>> GetAll()        
         {
             string sql = "SELECT * FROM Patients";            
 
-            return await _dbConnection.QueryAsync<Patient>(sql);
+            return await _dbConnection.QueryAsync<Patient>(sql, new { });            
         }
 
         public async Task<bool> InsertPatient(Patient patient)

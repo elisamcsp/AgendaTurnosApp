@@ -8,8 +8,9 @@
 
 @inject NavigationManager NavigationManager
 
-@if (activateAddShift) { 
-    <MudButton OnClick="NavigateToAddShift" Color="Color.Secondary"> + Añadir turno</MudButton>
+@if (activateAddShift)
+{
+    <MudButton Class="mb-3" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" OnClick="NavigateToAddShift" Color="Color.Error">Añadir turno</MudButton>
 }
 
 @Message
@@ -107,6 +108,14 @@ else
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
+
+        if (shiftFilter.DoctorFullName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (shiftFilter.PatientFullName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{shiftFilter.ShiftDate.ToShortDateString()}".Contains(searchString))
+            return true;
+        return false;
 
         return false;
     }

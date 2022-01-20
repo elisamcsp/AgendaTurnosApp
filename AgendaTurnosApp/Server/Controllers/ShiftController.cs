@@ -44,6 +44,16 @@ namespace AgendaTurnosApp.Server.Controllers
             if (Shift.DoctorId == 0)
                 ModelState.AddModelError("DoctorId", "Debe seleccionar el Doctor");
 
+            var shiftList = await _shiftRepository.GetAll();
+            if(shiftList.Any( 
+                s=> s.DoctorId == Shift.DoctorId && 
+                    s.PatientId == Shift.PatientId && 
+                    s.ShiftDate.ToShortDateString() == Shift.ShiftDate.ToShortDateString()
+                    ))
+            {                
+                ModelState.AddModelError(nameof(Shift.ShiftDate), "El paciente ya tiene un turno asignado en la fecha seleccionada.");                
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -60,6 +70,17 @@ namespace AgendaTurnosApp.Server.Controllers
                 ModelState.AddModelError("PatientId", "Debe seleccionar el Paciente");
             if (Shift.DoctorId == 0)
                 ModelState.AddModelError("DoctorId", "Debe seleccionar el Doctor");
+
+            IEnumerable<Shift> shiftList = await _shiftRepository.GetAll();
+            if (shiftList.Any(
+                s => s.DoctorId == Shift.DoctorId &&
+                    s.PatientId == Shift.PatientId &&
+                    s.ShiftDate.ToShortDateString() == Shift.ShiftDate.ToShortDateString()
+                    ))
+            {
+                ModelState.AddModelError(nameof(Shift.ShiftDate), "El paciente ya tiene un turno asignado en la fecha seleccionada.");
+                
+            }
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

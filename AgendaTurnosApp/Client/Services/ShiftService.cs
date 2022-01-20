@@ -26,12 +26,19 @@ namespace AgendaTurnosApp.Client.Services
             return await _httpClient.GetFromJsonAsync<IEnumerable<Shift>>($"api/shift");
         }
 
-        public async Task SaveShift(Shift shift)
+        public async Task<bool> SaveShift(Shift shift)
         {
+            HttpResponseMessage statusCode = new HttpResponseMessage();
             if (shift.Id == 0)
-                await _httpClient.PostAsJsonAsync($"api/shift", shift);
+            {
+                statusCode = await _httpClient.PostAsJsonAsync($"api/shift", shift);                
+            }
             else
-                await _httpClient.PutAsJsonAsync($"api/shift/{shift.Id}", shift);
+            {
+                statusCode =  await _httpClient.PutAsJsonAsync($"api/shift/{shift.Id}", shift);
+            }
+
+            return statusCode.IsSuccessStatusCode;
         }
 
         public async Task DeleteShift(int id)

@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AgendaTurnosApp.Repositories.Shifts;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Linq;
+
 
 namespace AgendaTurnosApp.Server.Controllers
 {
@@ -43,6 +48,12 @@ namespace AgendaTurnosApp.Server.Controllers
             if (string.IsNullOrEmpty(patient.DNI))
                 ModelState.AddModelError("LastName", "Debe rellenar el campo DNI/NIE/TIE");
 
+            IEnumerable<Patient> patients = await _patientRepository.GetAll();
+            if (patients.Any( p => p.DNI == patient.DNI))
+            {
+                ModelState.AddModelError(nameof(Patient.DNI), "Ya existe un paciente con el DNI insertado.");                
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -61,6 +72,12 @@ namespace AgendaTurnosApp.Server.Controllers
                 ModelState.AddModelError("LastName", "Debe rellenar el campo Apellidos");
             if (string.IsNullOrEmpty(patient.DNI))
                 ModelState.AddModelError("LastName", "Debe rellenar el campo DNI/NIE/TIE");
+
+            IEnumerable<Patient> patients = await _patientRepository.GetAll();
+            if (patients.Any(p => p.DNI == patient.DNI && p.FirstName != patient.FirstName && p.LastName != patient.LastName))
+            {
+                ModelState.AddModelError(nameof(Patient.DNI), "Ya existe un paciente con el mismo DNI insertado.");
+            }
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
