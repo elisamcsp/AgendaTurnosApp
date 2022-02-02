@@ -9,6 +9,7 @@ namespace AgendaTurnosApp.Shared
 {
     public class Shift
     {
+        [Key]
         public int Id { get; set; }
         [Required(ErrorMessage = "Debe seleccionar un Doctor")]
         public int DoctorId { get; set; }
